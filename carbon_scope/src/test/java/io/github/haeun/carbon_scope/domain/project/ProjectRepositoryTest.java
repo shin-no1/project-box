@@ -22,7 +22,7 @@ public class ProjectRepositoryTest {
 
     @Test
     public void getProject() {
-        String projectCode = "SmapleCode";
+        Integer projectCode = 1;
         String type = "type1";
         String name = "name1";
 
