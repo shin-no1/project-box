@@ -13,13 +13,9 @@ public class Region {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer regionCode;
 
-    @Column(length = 50, nullable = false)
-    private String name;
+    @Column(length = 20, nullable = false)
+    private String depth1;
 
-    @Builder
-    public Region(Integer regionCode, String name) {
-        this.regionCode = regionCode;
-        this.name = name;
-    }
-
+    @Column(length = 20, nullable = false)
+    private String depth2;
 }

@@ -13,7 +13,7 @@ public class ProjectDetail {
     @Id
     private String projectDetailCode;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "project_code")
     private Project project;
 
@@ -24,7 +24,7 @@ public class ProjectDetail {
     @Column(length = 100, nullable = false)
     private String name;
 
-    private Double xCoord;
-    private Double yCoord;
+    @Column(length = 100)
+    private String address;
 
 }
