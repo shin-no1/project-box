@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: carbon_scope
+  datasource:
+    url: jdbc:mariadb://localhost:3306/carbon_scope
+    username: user
+    password: user
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # DB ??? ?? ????
+    properties:
+      hibernate:
+        format_sql: true # SQL ?? ???
+    show-sql: true # ???? SQL ??? ??? ??
