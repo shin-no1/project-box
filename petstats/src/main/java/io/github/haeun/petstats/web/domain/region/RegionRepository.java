@@ -1,4 +1,4 @@
-package io.github.haeun.petstats.domain.region;
+package io.github.haeun.petstats.web.domain.region;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package io.github.haeun.petstats.domain.species;
+package io.github.haeun.petstats.web.domain.rfid_type;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Entity
-public class Species {
+public class RfidType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
