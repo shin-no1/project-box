@@ -38,10 +38,6 @@ public class AnimalStats {
     @ColumnDefault("0")
     private Integer animalCount;
 
-    @Column(columnDefinition = "TINYINT(1)", nullable = false)
-    @ColumnDefault("0")
-    private boolean isDangerous;
-
     @LastModifiedDate
     private LocalDateTime updateDate;
 
