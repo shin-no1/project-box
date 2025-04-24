@@ -1,4 +1,4 @@
-package io.github.haeun.petstats.domain.rfid_type;
+package io.github.haeun.petstats.domain.rfidType;
 
 import jakarta.persistence.*;
 import lombok.Getter;

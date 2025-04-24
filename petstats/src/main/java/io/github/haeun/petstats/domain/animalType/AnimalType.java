@@ -1,4 +1,4 @@
-package io.github.haeun.petstats.domain.animal_type;
+package io.github.haeun.petstats.domain.animalType;
 
 import io.github.haeun.petstats.domain.species.Species;
 import jakarta.persistence.*;

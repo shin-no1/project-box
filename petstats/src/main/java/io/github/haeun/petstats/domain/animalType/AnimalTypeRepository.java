@@ -1,4 +1,4 @@
-package io.github.haeun.petstats.domain.animal_type;
+package io.github.haeun.petstats.domain.animalType;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
