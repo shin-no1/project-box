@@ -1,0 +1,21 @@
+package io.github.haeun.petstats.domain.animal_type;
+
+import io.github.haeun.petstats.domain.species.Species;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@Getter
+@Entity
+public class AnimalType {
+    @Id
+    private Integer id;
+
+    @Column(length = 20, nullable = false)
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "species_id", nullable = false)
+    private Species species;
+}
