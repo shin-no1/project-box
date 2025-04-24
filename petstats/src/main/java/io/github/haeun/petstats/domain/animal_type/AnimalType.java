@@ -1,6 +1,6 @@
-package io.github.haeun.petstats.web.domain.animal_type;
+package io.github.haeun.petstats.domain.animal_type;
 
-import io.github.haeun.petstats.web.domain.species.Species;
+import io.github.haeun.petstats.domain.species.Species;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

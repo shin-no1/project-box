@@ -1,4 +1,4 @@
-package io.github.haeun.petstats.web.domain.rfid_type;
+package io.github.haeun.petstats.domain.rfid_type;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

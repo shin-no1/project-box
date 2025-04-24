@@ -1,4 +1,4 @@
-package io.github.haeun.petstats.web.domain.region;
+package io.github.haeun.petstats.domain.region;
 
 import jakarta.persistence.*;
 import lombok.Getter;

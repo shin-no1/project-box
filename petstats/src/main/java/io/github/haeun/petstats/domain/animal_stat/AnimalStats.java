@@ -1,8 +1,8 @@
-package io.github.haeun.petstats.web.domain.animal_stat;
+package io.github.haeun.petstats.domain.animal_stat;
 
-import io.github.haeun.petstats.web.domain.animal_type.AnimalType;
-import io.github.haeun.petstats.web.domain.region.Region;
-import io.github.haeun.petstats.web.domain.rfid_type.RfidType;
+import io.github.haeun.petstats.domain.animal_type.AnimalType;
+import io.github.haeun.petstats.domain.region.Region;
+import io.github.haeun.petstats.domain.rfid_type.RfidType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
