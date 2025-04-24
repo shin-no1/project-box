@@ -14,6 +14,11 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "multiUniqueConstraint", columnNames = {
+                "region_id", "animal_type_id", "birthYear", "rfid_type_id"
+        })
+})
 @Entity
 public class AnimalStats {
     @Id

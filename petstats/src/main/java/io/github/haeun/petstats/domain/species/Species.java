@@ -13,7 +13,7 @@ public class Species {
     @Id
     private Integer id;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 10, unique = true, nullable = false)
     private String name;
 
 }

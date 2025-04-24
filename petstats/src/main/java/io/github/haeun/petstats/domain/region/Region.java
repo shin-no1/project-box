@@ -1,13 +1,16 @@
 package io.github.haeun.petstats.domain.region;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "multiUniqueConstraint", columnNames = {
+                "province", "city"
+        })
+})
 @Entity
 public class Region {
     @Id

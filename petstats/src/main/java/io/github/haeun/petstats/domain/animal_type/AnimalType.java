@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "multiUniqueConstraint", columnNames = {
+                "name", "species_id"
+        })
+})
 @Entity
 public class AnimalType {
     @Id
