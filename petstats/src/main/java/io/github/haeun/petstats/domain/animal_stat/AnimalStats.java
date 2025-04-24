@@ -3,14 +3,13 @@ package io.github.haeun.petstats.domain.animal_stat;
 import io.github.haeun.petstats.domain.animal_type.AnimalType;
 import io.github.haeun.petstats.domain.region.Region;
 import io.github.haeun.petstats.domain.rfid_type.RfidType;
-import io.github.haeun.petstats.domain.species.Species;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @NoArgsConstructor
 @Getter
@@ -22,6 +21,7 @@ import java.time.LocalDateTime;
 @Entity
 public class AnimalStats {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
@@ -43,7 +43,7 @@ public class AnimalStats {
     @ColumnDefault("0")
     private Integer animalCount;
 
-    @LastModifiedDate
-    private LocalDateTime updateDate;
+    @UpdateTimestamp
+    private Timestamp updateDate;
 
 }

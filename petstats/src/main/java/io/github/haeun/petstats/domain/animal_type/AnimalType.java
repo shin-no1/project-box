@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class AnimalType {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(length = 20, nullable = false)
