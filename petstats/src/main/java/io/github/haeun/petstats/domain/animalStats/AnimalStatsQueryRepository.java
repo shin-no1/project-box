@@ -4,17 +4,13 @@ package io.github.haeun.petstats.domain.animalStats;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.haeun.petstats.domain.animalType.QAnimalType;
-import io.github.haeun.petstats.domain.region.QRegion;
 import io.github.haeun.petstats.domain.rfidType.QRfidType;
 import io.github.haeun.petstats.domain.species.QSpecies;
-import io.github.haeun.petstats.web.dto.RegionResponse;
-import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeResponse;
 import io.github.haeun.petstats.web.dto.TopRfidTypeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -47,7 +43,7 @@ public class AnimalStatsQueryRepository {
                 .fetch();
     }
 
-    public List<TopRfidTypeResponse> getTopRfidType(Integer rfidTypeId) {
+    public List<TopRfidTypeResponse> getTopRfidType(Integer birthYear, Integer rfidTypeId) {
         QAnimalStats stats = QAnimalStats.animalStats;
         QAnimalType type = QAnimalType.animalType;
         QRfidType rfidType = QRfidType.rfidType;
@@ -62,10 +58,26 @@ public class AnimalStatsQueryRepository {
                 .from(stats)
                 .join(stats.animalType, type)
                 .join(stats.rfidType, rfidType)
-                .where(rfidType.id.eq(rfidTypeId))
+                .where(
+                        birthYear != null ? stats.birthYear.eq(birthYear) : null,
+                        rfidType.id.eq(rfidTypeId)
+                )
                 .groupBy(stats.animalType.id)
                 .orderBy(stats.animalCount.sum().desc())
                 .limit(5)
+                .fetch();
+    }
+
+    public List<Integer> getBirthYears() {
+        QAnimalStats stats = QAnimalStats.animalStats;
+        return queryFactory
+                .select(Projections.constructor(
+                        Integer.class,
+                        stats.birthYear
+                ))
+                .from(stats)
+                .groupBy(stats.birthYear)
+                .orderBy(stats.birthYear.desc())
                 .fetch();
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.haeun.petstats.service.PetStatsService;
 import io.github.haeun.petstats.service.FilterService;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
+import io.github.haeun.petstats.web.dto.TopRfidTypeRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -21,10 +22,10 @@ public class PetStatsController {
     private final FilterService filterService;
 
     @GetMapping("/animal-types/top")
-    public String getTopAnimalType(Model model, RegionTopAnimalTypeRequest regionTopAnimalTypeRequest) {
+    public String getTopAnimalType(Model model, RegionTopAnimalTypeRequest request) {
         try {
-            model.addAttribute("dataList", petStatsService.getTopAnimalTypes(regionTopAnimalTypeRequest));
-            model.addAttribute("regions", filterService.getRegions(regionTopAnimalTypeRequest.getRegionId()));
+            model.addAttribute("dataList", petStatsService.getTopAnimalTypes(request));
+            model.addAttribute("regions", filterService.getRegions(request.getRegionId()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -32,11 +33,13 @@ public class PetStatsController {
     }
 
     @GetMapping("/rfid-types/top")
-    public String getTopRfidType(Model model) {
+    public String getTopRfidType(Model model, TopRfidTypeRequest request) {
         try {
-            List<Map<String, Object>> dataList = petStatsService.getTopRfidTypes();
+            List<Map<String, Object>> dataList = petStatsService.getTopRfidTypes(request.getBirthYear());
             model.addAttribute("dataList", dataList);
             model.addAttribute("dataListJson", new ObjectMapper().writeValueAsString(dataList));
+            model.addAttribute("birthYears", filterService.getBirthYears(request.getBirthYear()));
+            model.addAttribute("isSelected", request.getBirthYear());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

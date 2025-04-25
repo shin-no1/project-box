@@ -30,7 +30,7 @@ public class PetStatsService {
         return response;
     }
 
-    public List<Map<String, Object>> getTopRfidTypes() {
+    public List<Map<String, Object>> getTopRfidTypes(Integer birthYear) {
         List<Map<String, Object>> response = new ArrayList<>();
         int count = 0;
         for (RfidType rfidType : filterService.getRfidTypes()) {
@@ -38,7 +38,7 @@ public class PetStatsService {
             response.add(new HashMap<>() {{
                 put("index", finalCount);
                 put("name", rfidType.getName());
-                put("data", animalStatsQueryRepository.getTopRfidType(rfidType.getId()));
+                put("data", animalStatsQueryRepository.getTopRfidType(birthYear, rfidType.getId()));
             }});
             count++;
         }

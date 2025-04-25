@@ -9,6 +9,19 @@
     <main class="content">
         <h2>RFID 등록 유형별 통계</h2>
 
+        <!-- 연도 선택 필터 -->
+        <div style="display: flex; justify-content: flex-end; margin: 20px 0;">
+            <form method="get">
+                <label for="birthYear">연도:</label>
+                <select name="birthYear" id="birthYear" onchange="this.form.submit()">
+                    <option value="">전체</option>
+                    {{#birthYears}}
+                        <option value="{{birthYear}}" {{#isSelected}}selected{{/isSelected}}>{{birthYear}}</option>
+                    {{/birthYears}}
+                </select>
+            </form>
+        </div>
+
         <div style="max-width: 400px; margin: 20px auto;">
             <canvas id="rfidPieChart"></canvas>
         </div>

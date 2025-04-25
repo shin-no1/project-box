@@ -49,14 +49,14 @@ public class FilterCacheService {
         log.info("[CacheEvict] species");
     }
 
-    @Cacheable(value = "rfidType")
+    @Cacheable(value = "rfidTypes")
     public List<RfidType> getRfidTypes() {
-        log.info("[Cacheable] species");
+        log.info("[Cacheable] rfidTypes");
         return rfidTypeRepository.findAll();
     }
 
     @Scheduled(fixedDelay = CACHE_EXPIRATION)
-    @CacheEvict(value = "rfidType", allEntries = true)
+    @CacheEvict(value = "rfidTypes", allEntries = true)
     public void evictRfidTypes() {
         log.info("[CacheEvict] rfidType");
     }
