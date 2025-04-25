@@ -16,7 +16,7 @@
                 <select name="regionId" id="regionId" onchange="this.form.submit()">
                     <option value="">전체</option>
                     {{#regions}}
-                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                        <option value="{{id}}" {{#isSelected}}selected{{/isSelected}}>{{name}}</option>
                     {{/regions}}
                 </select>
             </form>

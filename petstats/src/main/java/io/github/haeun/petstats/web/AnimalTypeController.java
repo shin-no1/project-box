@@ -23,15 +23,9 @@ public class AnimalTypeController {
     @GetMapping("/animal-types/top")
     public String getTopAnimalType(Model model, RegionTopAnimalTypeRequest regionTopAnimalTypeRequest) {
         List<List<RegionTopAnimalTypeResponse>> topList = animalTypeService.getTopAnimalTypes(regionTopAnimalTypeRequest);
-        List<RegionResponse> regions = filterService.getRegions();
         model.addAttribute("dogList", topList.get(0));
         model.addAttribute("catList", topList.get(1));
-        model.addAttribute("regions", regions.stream()
-                .map(r -> Map.of(
-                        "id", r.getId(),
-                        "name", r.getProvince(),
-                        "selected", regionTopAnimalTypeRequest.getRegionId() != null && r.getId().equals(regionTopAnimalTypeRequest.getRegionId())
-                )).toList());
+        model.addAttribute("regions", filterService.getRegions(regionTopAnimalTypeRequest.getRegionId()));
         return "top-animal-types";
     }
 }
