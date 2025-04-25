@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+{{> layout/head }}
+
+<body>
+<div class="container">
+    <aside class="sidebar">
+        {{> layout/sidebar }}
+    </aside>
+
+    <main class="content">
+        <!-- 지역 선택 -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+            <form method="get">
+                <label for="regionId">지역:</label>
+                <select name="regionId" id="regionId" onchange="this.form.submit()">
+                    <option value="">전체</option>
+                    {{#regions}}
+                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/regions}}
+                </select>
+            </form>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('dog')">강아지</button>
+            <button class="tab-button" onclick="showTab('cat')">고양이</button>
+        </div>
+
+        <!-- 강아지 영역 -->
+        <div id="tab-dog" class="tab-content" style="display: block;">
+            <canvas id="dogChart" width="600" height="300"></canvas>
+        </div>
+
+        <!-- 고양이 영역 -->
+        <div id="tab-cat" class="tab-content" style="display: none;">
+            <canvas id="catChart" width="600" height="300"></canvas>
+        </div>
+    </main>
+</div>
+<script>
+    function showTab(type) {
+        // 모든 탭 숨기기
+        document.getElementById('tab-dog').style.display = 'none';
+        document.getElementById('tab-cat').style.display = 'none';
+
+        // 클릭된 탭만 보여주기
+        document.getElementById('tab-' + type).style.display = 'block';
+
+        // 버튼 상태 변경
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.tab-button[onclick="showTab(\'' + type + '\')"]').classList.add('active');
+    }
+</script>
+<script>
+    function getOptions(species) {
+        return {
+            responsive: true,
+            plugins: {
+                title: {display: true, text: `${species} 대표 품종 TOP10`},
+                legend: {display: false},
+                datalabels: {
+                    anchor: 'end',
+                    align: 'bottom',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: function (value) {
+                        return value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+
+    new Chart(document.getElementById('dogChart'), {
+        type: 'bar',
+        data: {
+            labels: [{{#dogList}}"{{type}}"{{^last}},{{/last}}{{/dogList}}],
+            datasets: [{
+                label: '강아지 마릿수',
+                data: [{{#dogList}}{{count}}{{^last}},{{/last}}{{/dogList}}],
+                backgroundColor: 'rgba(255, 159, 64, 0.6)'
+            }]
+        },
+        options: getOptions('강아지'),
+        plugins: [ChartDataLabels]
+    });
+    new Chart(document.getElementById('catChart'), {
+        type: 'bar',
+        data: {
+            labels: [{{#catList}}"{{type}}"{{^last}},{{/last}}{{/catList}}],
+            datasets: [{
+                label: '고양이 마릿수',
+                data: [{{#catList}}{{count}}{{^last}},{{/last}}{{/catList}}],
+                backgroundColor: 'rgba(153, 102, 255, 0.6)'
+            }]
+        },
+        options: getOptions('고양이'),
+        plugins: [ChartDataLabels]
+    });
+</script>
+</body>
+</html>

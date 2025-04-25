@@ -4,7 +4,9 @@ package io.github.haeun.petstats.domain.animalStats;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.haeun.petstats.domain.animalType.QAnimalType;
+import io.github.haeun.petstats.domain.region.QRegion;
 import io.github.haeun.petstats.domain.species.QSpecies;
+import io.github.haeun.petstats.web.dto.RegionResponse;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +20,18 @@ import java.util.List;
 public class AnimalStatsQueryRepository {
     private final JPAQueryFactory queryFactory;
 
-    public List<RegionTopAnimalTypeResponse> getTopAnimalTypeResponseList(RegionTopAnimalTypeRequest request) {
-        List<RegionTopAnimalTypeResponse> dogTop10 = getTopBreedsBySpecies(request.getRegionId(), 1);
+    public List<RegionResponse> getRegions() {
+        QRegion region = QRegion.region;
+        return queryFactory.select(Projections.constructor(RegionResponse.class, region.id, region.province)).from(region).fetch();
+    }
+
+    public List<List<RegionTopAnimalTypeResponse>> getTopAnimalTypeResponseList(RegionTopAnimalTypeRequest request) {
+        List<RegionTopAnimalTypeResponse> dogTop10 = getTopBreedsBySpecies(request.getRegionId(), 1); // TODO: 강아지 고양이 따로 받아와서 입력할 수 있도록 해야함
         List<RegionTopAnimalTypeResponse> catTop10 = getTopBreedsBySpecies(request.getRegionId(), 2);
 
-        List<RegionTopAnimalTypeResponse> result = new ArrayList<>();
-        result.addAll(dogTop10);
-        result.addAll(catTop10);
+        List<List<RegionTopAnimalTypeResponse>> result = new ArrayList<>();
+        result.add(dogTop10);
+        result.add(catTop10);
         return result;
     }
 

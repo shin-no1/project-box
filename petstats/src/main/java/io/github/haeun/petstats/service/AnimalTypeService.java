@@ -1,6 +1,7 @@
 package io.github.haeun.petstats.service;
 
 import io.github.haeun.petstats.domain.animalStats.AnimalStatsQueryRepository;
+import io.github.haeun.petstats.web.dto.RegionResponse;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,11 @@ import java.util.List;
 public class AnimalTypeService {
     private final AnimalStatsQueryRepository animalStatsQueryRepository;
 
-    public List<RegionTopAnimalTypeResponse> getTopAnimalTypes(RegionTopAnimalTypeRequest request) {
+    public List<RegionResponse> getRegions() {
+        return animalStatsQueryRepository.getRegions();
+    }
+
+    public List<List<RegionTopAnimalTypeResponse>> getTopAnimalTypes(RegionTopAnimalTypeRequest request) {
         return animalStatsQueryRepository.getTopAnimalTypeResponseList(request);
     }
 }

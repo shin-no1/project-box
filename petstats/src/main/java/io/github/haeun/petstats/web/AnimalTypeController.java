@@ -1,21 +1,35 @@
 package io.github.haeun.petstats.web;
 
+import io.github.haeun.petstats.domain.region.Region;
 import io.github.haeun.petstats.service.AnimalTypeService;
+import io.github.haeun.petstats.web.dto.RegionResponse;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
-@RestController
+@Controller
 public class AnimalTypeController {
     private final AnimalTypeService animalTypeService;
 
-    @GetMapping("/api/top-animal-type")
-    public List<RegionTopAnimalTypeResponse> getTopAnimalType(RegionTopAnimalTypeRequest regionTopAnimalTypeRequest) {
-        return animalTypeService.getTopAnimalTypes(regionTopAnimalTypeRequest);
+    @GetMapping("/animal-types/top")
+    public String getTopAnimalType(Model model, RegionTopAnimalTypeRequest regionTopAnimalTypeRequest) {
+        List<List<RegionTopAnimalTypeResponse>> topList = animalTypeService.getTopAnimalTypes(regionTopAnimalTypeRequest);
+        List<RegionResponse> regions = animalTypeService.getRegions();
+        model.addAttribute("dogList", topList.get(0));
+        model.addAttribute("catList", topList.get(1));
+        model.addAttribute("regions", regions.stream()
+                .map(r -> Map.of(
+                        "id", r.getId(),
+                        "name", r.getProvince(),
+                        "selected", regionTopAnimalTypeRequest.getRegionId() != null && r.getId().equals(regionTopAnimalTypeRequest.getRegionId())
+                )).toList());
+        return "top-animal-types";
     }
 }
