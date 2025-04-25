@@ -1,7 +1,6 @@
 package io.github.haeun.petstats.service;
 
 import io.github.haeun.petstats.domain.animalStats.AnimalStatsQueryRepository;
-import io.github.haeun.petstats.domain.animalStats.AnimalStatsRepository;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeResponse;
 import lombok.RequiredArgsConstructor;
