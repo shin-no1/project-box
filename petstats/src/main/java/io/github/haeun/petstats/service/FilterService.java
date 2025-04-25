@@ -1,6 +1,7 @@
 package io.github.haeun.petstats.service;
 
 import io.github.haeun.petstats.domain.region.Region;
+import io.github.haeun.petstats.domain.species.Species;
 import io.github.haeun.petstats.service.cache.FilterCacheService;
 import io.github.haeun.petstats.web.dto.RegionResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,9 @@ public class FilterService {
                         Objects.equals(region.getId(), regionId)
                 ))
                 .toList();
+    }
+
+    public List<Species> getSpecies() {
+        return filterCacheService.getSpecies();
     }
 }

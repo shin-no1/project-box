@@ -20,22 +20,7 @@ import java.util.List;
 public class AnimalStatsQueryRepository {
     private final JPAQueryFactory queryFactory;
 
-    public List<RegionResponse> getRegions() {
-        QRegion region = QRegion.region;
-        return queryFactory.select(Projections.constructor(RegionResponse.class, region.id, region.province)).from(region).fetch();
-    }
-
-    public List<List<RegionTopAnimalTypeResponse>> getTopAnimalTypeResponseList(RegionTopAnimalTypeRequest request) {
-        List<RegionTopAnimalTypeResponse> dogTop10 = getTopBreedsBySpecies(request.getRegionId(), 1); // TODO: 강아지 고양이 따로 받아와서 입력할 수 있도록 해야함
-        List<RegionTopAnimalTypeResponse> catTop10 = getTopBreedsBySpecies(request.getRegionId(), 2);
-
-        List<List<RegionTopAnimalTypeResponse>> result = new ArrayList<>();
-        result.add(dogTop10);
-        result.add(catTop10);
-        return result;
-    }
-
-    private List<RegionTopAnimalTypeResponse> getTopBreedsBySpecies(Integer regionId, Integer speciesId) {
+    public List<RegionTopAnimalTypeResponse> getTopBreedsBySpecies(Integer regionId, Integer speciesId) {
         QAnimalStats stats = QAnimalStats.animalStats;
         QAnimalType type = QAnimalType.animalType;
         QSpecies species = QSpecies.species;

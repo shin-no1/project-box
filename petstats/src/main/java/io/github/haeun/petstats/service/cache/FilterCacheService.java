@@ -34,4 +34,16 @@ public class FilterCacheService {
         log.info("[CacheEvict] regions");
     }
 
+    @Cacheable(value = "species")
+    public List<Species> getSpecies() {
+        log.info("[Cacheable] species");
+        return speciesRepository.findAll();
+    }
+
+    @Scheduled(fixedDelay = CACHE_EXPIRATION)
+    @CacheEvict(value = "species", allEntries = true)
+    public void evictSpecies() {
+        log.info("[CacheEvict] species");
+    }
+
 }
