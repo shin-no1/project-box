@@ -30,8 +30,6 @@ body {
 }
 
 
-
-
 /* sidebar */
 nav ul {
     list-style: none;
@@ -73,4 +71,36 @@ nav ul {
 .sidebar nav a:hover {
     background-color: #e6f0ff;
     color: #004a99;
+}
+
+/* top-rfid-types */
+.rfid-table-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 24px;
+    margin-top: 30px;
+    flex-wrap: nowrap; /* 넘칠 경우: scroll 가능하게 하고 싶으면 overflow 추가 */
+}
+
+.rfid-table-block {
+    flex: 1;
+    min-width: 250px;
+}
+
+.rfid-table-block table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.rfid-table-block th,
+.rfid-table-block td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.rfid-table-block th {
+    background-color: #f0f0f0;
+    font-weight: 600;
 }

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+{{> layout/head }}
+
+<body>
+<div class="container">
+        {{> layout/sidebar }}
+
+    <main class="content">
+        <h2>RFID 등록 유형별 통계</h2>
+
+        <div style="max-width: 400px; margin: 20px auto;">
+            <canvas id="rfidPieChart"></canvas>
+        </div>
+
+        <div class="rfid-table-container">
+            {{#dataList}}
+                <div class="rfid-table-block">
+                    <h3>{{name}} TOP5</h3>
+                    <table>
+                        <thead>
+                        <tr><th>품종</th><th>마릿수</th></tr>
+                        </thead>
+                        <tbody>
+                        {{#data}}
+                            <tr>
+                                <td>{{type}}</td>
+                                <td>{{count}}</td>
+                            </tr>
+                        {{/data}}
+                        </tbody>
+                    </table>
+                </div>
+            {{/dataList}}
+        </div>
+    </main>
+</div>
+<script>
+    const colorList = [
+        `rgba(255, 206, 86, 0.8)`,
+        `rgba(54, 162, 235, 0.8)`,
+        `rgba(255, 99, 132, 0.8)`,
+        `rgba(153, 102, 255, 0.8)`,
+        `rgba(75, 192, 192, 0.8)`,
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const dataList = {{&dataListJson}}; // JSON 그대로 삽입
+
+        const labels = dataList.map(d => d.name);
+        const values = dataList.map(d =>
+                d.data.reduce((acc, item) => acc + item.count, 0)
+        );
+
+        new Chart(document.getElementById('rfidPieChart'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colorList,
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'RFID 유형별 등록 비율'
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

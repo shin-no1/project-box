@@ -2,6 +2,8 @@ package io.github.haeun.petstats.service.cache;
 
 import io.github.haeun.petstats.domain.region.Region;
 import io.github.haeun.petstats.domain.region.RegionRepository;
+import io.github.haeun.petstats.domain.rfidType.RfidType;
+import io.github.haeun.petstats.domain.rfidType.RfidTypeRepository;
 import io.github.haeun.petstats.domain.species.Species;
 import io.github.haeun.petstats.domain.species.SpeciesRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.List;
 public class FilterCacheService {
     private final RegionRepository regionRepository;
     private final SpeciesRepository speciesRepository;
+    private final RfidTypeRepository rfidTypeRepository;
 
     final int CACHE_EXPIRATION = 60 * 60 * 24;
 
@@ -44,6 +47,18 @@ public class FilterCacheService {
     @CacheEvict(value = "species", allEntries = true)
     public void evictSpecies() {
         log.info("[CacheEvict] species");
+    }
+
+    @Cacheable(value = "rfidType")
+    public List<RfidType> getRfidTypes() {
+        log.info("[Cacheable] species");
+        return rfidTypeRepository.findAll();
+    }
+
+    @Scheduled(fixedDelay = CACHE_EXPIRATION)
+    @CacheEvict(value = "rfidType", allEntries = true)
+    public void evictRfidTypes() {
+        log.info("[CacheEvict] rfidType");
     }
 
 }

@@ -1,6 +1,7 @@
 package io.github.haeun.petstats.service;
 
 import io.github.haeun.petstats.domain.animalStats.AnimalStatsQueryRepository;
+import io.github.haeun.petstats.domain.rfidType.RfidType;
 import io.github.haeun.petstats.domain.species.Species;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,21 @@ public class PetStatsService {
                 put("index", finalCount);
                 put("name", species.getName());
                 put("data", animalStatsQueryRepository.getTopBreedsBySpecies(request.getRegionId(), species.getId()));
+            }});
+            count++;
+        }
+        return response;
+    }
+
+    public List<Map<String, Object>> getTopRfidTypes() {
+        List<Map<String, Object>> response = new ArrayList<>();
+        int count = 0;
+        for (RfidType rfidType : filterService.getRfidTypes()) {
+            int finalCount = count;
+            response.add(new HashMap<>() {{
+                put("index", finalCount);
+                put("name", rfidType.getName());
+                put("data", animalStatsQueryRepository.getTopRfidType(rfidType.getId()));
             }});
             count++;
         }

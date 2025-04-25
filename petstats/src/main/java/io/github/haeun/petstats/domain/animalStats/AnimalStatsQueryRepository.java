@@ -5,10 +5,12 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.haeun.petstats.domain.animalType.QAnimalType;
 import io.github.haeun.petstats.domain.region.QRegion;
+import io.github.haeun.petstats.domain.rfidType.QRfidType;
 import io.github.haeun.petstats.domain.species.QSpecies;
 import io.github.haeun.petstats.web.dto.RegionResponse;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeRequest;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeResponse;
+import io.github.haeun.petstats.web.dto.TopRfidTypeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -42,6 +44,28 @@ public class AnimalStatsQueryRepository {
                 .groupBy(type.id, species.name, type.name)
                 .orderBy(stats.animalCount.sum().desc())
                 .limit(10)
+                .fetch();
+    }
+
+    public List<TopRfidTypeResponse> getTopRfidType(Integer rfidTypeId) {
+        QAnimalStats stats = QAnimalStats.animalStats;
+        QAnimalType type = QAnimalType.animalType;
+        QRfidType rfidType = QRfidType.rfidType;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        TopRfidTypeResponse.class,
+                        rfidType.name,
+                        type.name,
+                        stats.animalCount.sum()
+                ))
+                .from(stats)
+                .join(stats.animalType, type)
+                .join(stats.rfidType, rfidType)
+                .where(rfidType.id.eq(rfidTypeId))
+                .groupBy(stats.animalType.id)
+                .orderBy(stats.animalCount.sum().desc())
+                .limit(5)
                 .fetch();
     }
 
