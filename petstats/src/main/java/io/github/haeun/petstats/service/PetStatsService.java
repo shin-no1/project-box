@@ -10,7 +10,7 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Service
-public class AnimalTypeService {
+public class PetStatsService {
     private final FilterService filterService;
     private final AnimalStatsQueryRepository animalStatsQueryRepository;
 
