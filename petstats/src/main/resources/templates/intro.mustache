@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+{{> layout/head }}
+
+<body>
+<div class="container">
+    {{> layout/sidebar }}
+
+    <main class="content">
+        <h1>Pet Stats</h1>
+        <p>반려동물 등록 통계를 시각화하여 한눈에 볼 수 있는 통계 서비스입니다.<br>
+            경기도 반려동물 등록 데이터를 기반으로 분석하고 있습니다.
+        </p>
+
+        <h2>주요 기능</h2>
+        <ul>
+            <li>📍 지역별 대표 품종 TOP10 조회</li>
+            <li>📍 RFID 등록 유형별 비율 분석</li>
+            <li>📍 연도별 반려동물 등록 추이 분석</li>
+            <li>📍 지역/연도 필터링 기능 지원</li>
+        </ul>
+
+        <h2>사용 기술 스택</h2>
+        <ul>
+            <li>⚙️ Backend: Spring Boot, QueryDSL, Spring Cache</li>
+            <li>⚙️ Frontend: Mustache, Chart.js</li>
+            <li>⚙️ Database: MariaDB</li>
+        </ul>
+
+    </main>
+</div>
+</body>
+</html>
