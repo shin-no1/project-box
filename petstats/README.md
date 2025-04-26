@@ -6,22 +6,6 @@
 
 ---
 
-## 📸 주요 화면
-
-### 📍 지역별 대표 품종 TOP10
-![top-animal-types](./screenshots/PetStats_animalType_1.gif)
-![top-animal-types](./screenshots/PetStats_animalType_2.gif)
-
-### 📍 RFID 등록 유형별 통계
-![top-rfid-types](./screenshots/PetStats_rfid_1.gif)
-![top-rfid-types](./screenshots/PetStats_rfid_2.gif)
-
-### 📍 연도별 등록 추이
-![trend](./screenshots/PetStats_stats_1.gif)
-![trend](./screenshots/PetStats_stats_2.gif)
-
----
-
 ## 🛠️ 사용 기술 스택
 
 - **Backend**: Spring Boot, QueryDSL, Spring Cache
@@ -37,6 +21,22 @@
 - 연도별 등록 추이 분석
 - 지역/연도별 필터링 기능 지원
 - 반응형 차트 (Chart.js)
+
+---
+
+## 📸 주요 화면
+
+### 📍 지역별 대표 품종 TOP10
+![top-animal-types](./screenshots/PetStats_animalType_1.gif)
+![top-animal-types](./screenshots/PetStats_animalType_2.gif)
+
+### 📍 RFID 등록 유형별 통계
+![top-rfid-types](./screenshots/PetStats_rfid_1.gif)
+![top-rfid-types](./screenshots/PetStats_rfid_2.gif)
+
+### 📍 연도별 등록 추이
+![trend](./screenshots/PetStats_stats_1.gif)
+![trend](./screenshots/PetStats_stats_2.gif)
 
 ---
 
