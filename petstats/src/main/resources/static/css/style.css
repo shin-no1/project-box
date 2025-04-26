@@ -4,6 +4,7 @@ body {
 }
 .container {
     display: flex;
+    margin-left: 300px;
     min-height: 100vh;
 }
 
@@ -36,6 +37,9 @@ nav ul {
     padding-left: 0;
 }
 .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 300px;
     min-width: 300px;
     min-height: 100vh;
