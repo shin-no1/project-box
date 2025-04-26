@@ -25,7 +25,7 @@ public class FilterService {
         return regions.stream()
                 .map(region -> new RegionResponse(
                         region.getId(),
-                        region.getProvince(),
+                        region.getCity(),
                         Objects.equals(region.getId(), regionId)
                 ))
                 .toList();
