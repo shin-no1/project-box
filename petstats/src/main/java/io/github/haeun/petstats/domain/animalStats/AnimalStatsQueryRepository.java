@@ -4,8 +4,10 @@ package io.github.haeun.petstats.domain.animalStats;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.haeun.petstats.domain.animalType.QAnimalType;
+import io.github.haeun.petstats.domain.region.QRegion;
 import io.github.haeun.petstats.domain.rfidType.QRfidType;
 import io.github.haeun.petstats.domain.species.QSpecies;
+import io.github.haeun.petstats.web.dto.AnimalStatsTrendResponse;
 import io.github.haeun.petstats.web.dto.RegionTopAnimalTypeResponse;
 import io.github.haeun.petstats.web.dto.TopRfidTypeResponse;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +81,34 @@ public class AnimalStatsQueryRepository {
                 .groupBy(stats.birthYear)
                 .orderBy(stats.birthYear.desc())
                 .fetch();
+    }
+
+    public List<AnimalStatsTrendResponse> getAnimalStatsTrend(Integer regionId) {
+        QAnimalStats stats = QAnimalStats.animalStats;
+        QAnimalType type = QAnimalType.animalType;
+        QSpecies species = QSpecies.species;
+        QRegion region = QRegion.region;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        AnimalStatsTrendResponse.class,
+                        region.city,
+                        species.name,
+                        stats.birthYear,
+                        stats.animalCount.sum()
+                ))
+                .from(stats)
+                .join(stats.region, region)
+                .join(stats.animalType, type)
+                .join(type.species, species)
+                .where(
+                        stats.birthYear.gt(1999),
+                        regionId != null ? stats.region.id.eq(regionId) : null
+                )
+                .groupBy(species.id, stats.birthYear)
+                .orderBy(species.id.asc(), stats.birthYear.asc())
+                .fetch();
+
     }
 
 }

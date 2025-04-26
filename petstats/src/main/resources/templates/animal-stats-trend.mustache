@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+{{> layout/head }}
+
+<body>
+<div class="container">
+    {{> layout/sidebar }}
+
+    <main class="content">
+        <h2>연도별 반려동물 등록 추이</h2>
+
+        <!-- 지역 선택 -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+            <form method="get">
+                <label for="regionId">지역:</label>
+                <select name="regionId" id="regionId" onchange="this.form.submit()">
+                    <option value="">전체</option>
+                    {{#regions}}
+                        <option value="{{id}}" {{#isSelected}}selected{{/isSelected}}>{{name}}</option>
+                    {{/regions}}
+                </select>
+            </form>
+        </div>
+
+        <!-- 라인 차트 -->
+        <div style="">
+            <canvas id="trendChart" width="600" height="300"></canvas>
+        </div>
+    </main>
+</div>
+
+<script>
+    const colorList = [
+        `rgba(255, 206, 86, 0.8)`,
+        `rgba(54, 162, 235, 0.8)`,
+        `rgba(255, 99, 132, 0.8)`,
+        `rgba(153, 102, 255, 0.8)`,
+        `rgba(75, 192, 192, 0.8)`,
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const rawData = {{&dataListJson}}; // List<AnimalSpeciesTrendResponse> → JSON
+        const labels = [...new Set(rawData.map(item => item.birthYear))]; // 연도 중복 제거
+        labels.sort();
+
+        const speciesGroup = {};
+        rawData.forEach(item => {
+            const key = item.species;
+            if (!speciesGroup[key]) speciesGroup[key] = {};
+            speciesGroup[key][item.birthYear] = item.count;
+        });
+
+        // species별 dataset 생성
+        const datasets = Object.keys(speciesGroup).map((species, i) => {
+            return {
+                label: species,
+                data: labels.map(year => speciesGroup[species][year] || 0),
+                borderColor: colorList[i % colorList.length],
+                backgroundColor: colorList[i % colorList.length],
+                fill: false,
+                tension: 0.3,
+            };
+        });
+
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+                labels: labels, // birthYears
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '연도별 반려동물 등록 추이'
+                    },
+                    tooltip: {
+                        enabled: false  // 툴팁 제거도 가능
+                    },
+                    datalabels: {
+                        color: '#333',
+                        anchor: 'end',
+                        align: 'top',
+                        font: {
+                            weight: 'bold',
+                            size: 10
+                        },
+                        formatter: value => value.toLocaleString()
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    });
+</script>
+
+
+</body>
+</html>
