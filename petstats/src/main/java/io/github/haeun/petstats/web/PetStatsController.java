@@ -23,6 +23,11 @@ public class PetStatsController {
     private final PetStatsService petStatsService;
     private final FilterService filterService;
 
+    @GetMapping("/intro")
+    public String intro(Model model) {
+        return "intro";
+    }
+
     @GetMapping("/animal-types/top")
     public String getTopAnimalType(Model model, RegionTopAnimalTypeRequest request) {
         try {
