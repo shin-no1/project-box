@@ -1,8 +1,11 @@
 package io.github.haeun.coupon.service;
 
+import io.github.haeun.coupon.common.exception.CustomException;
+import io.github.haeun.coupon.common.exception.ErrorCode;
 import io.github.haeun.coupon.domain.coupons.Coupons;
 import io.github.haeun.coupon.domain.coupons.CouponsRepository;
 import io.github.haeun.coupon.web.dto.CreateCouponRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +21,7 @@ public class AdminService {
     private static final String COUPON_STOCK_PREFIX = "coupon:";
     private final CouponsRepository couponsRepository;
 
+    @Transactional
     public Long createCoupon(CreateCouponRequest request) {
         try {
             // 1. DB에 쿠폰 저장
@@ -29,7 +33,6 @@ public class AdminService {
 
             // 2. Redis에 재고 저장
             String key = COUPON_STOCK_PREFIX + savedCoupon.getId() + ":stock";
-
             if (request.getTtlSeconds() != null && request.getTtlSeconds() > 0) {
                 redisTemplate.opsForValue().set(key, request.getTotalQuantity(), Duration.ofSeconds(request.getTtlSeconds()));
             } else {
@@ -38,8 +41,8 @@ public class AdminService {
             return savedCoupon.getId();
         } catch (Exception e) {
             log.error("{} ERROR!", request.toString(), e);
+            throw new CustomException(ErrorCode.COUPON_CREATION_FAILED);
         }
-        return null;
     }
 
 }
