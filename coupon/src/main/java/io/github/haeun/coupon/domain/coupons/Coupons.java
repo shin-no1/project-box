@@ -1,6 +1,7 @@
 package io.github.haeun.coupon.domain.coupons;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -15,18 +16,25 @@ import java.sql.Timestamp;
 public class Coupons {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(length = 50, nullable = false)
     private String name;
 
     @ColumnDefault("0")
     @Column(nullable = false)
-    private int total_quantity;
+    private int totalQuantity;
 
     @CreationTimestamp
     private Timestamp created_at;
 
     @UpdateTimestamp
     private Timestamp updated_at;
+
+    @Builder
+    public Coupons(String name, int totalQuantity) {
+        this.name = name;
+        this.totalQuantity = totalQuantity;
+    }
+
 }
