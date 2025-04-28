@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final AdminService adminService;
 
-    @PostMapping("/coupon")
+    @PostMapping("/coupons")
     public ResponseEntity<?> createCoupon(@RequestBody CreateCouponRequest request) {
         Long couponId = adminService.createCoupon(request);
         return ResponseEntity.ok(new CreateCouponResponse(couponId, "쿠폰 등록 및 재고 초기화 완료"));
     }
 
-    @GetMapping("/coupon/{couponId}")
+    @GetMapping("/coupons/{couponId}")
     public ResponseEntity<?> getCoupon(@PathVariable Long couponId) {
         Integer stock = adminService.getCouponStock(couponId);
         return ResponseEntity.ok(new CouponStockResponse(couponId, stock));
