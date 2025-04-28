@@ -16,12 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
     private final AdminService adminService;
 
-    @PostMapping("/coupons")
+    @PostMapping("/coupon")
     public ResponseEntity<?> createCoupon(@RequestBody CreateCouponRequest request) {
         Long couponId = adminService.createCoupon(request);
-        if (couponId != null) {
-            return ResponseEntity.ok(new CreateCouponResponse(couponId, "쿠폰 등록 및 재고 초기화 완료"));
-        }
-        return ResponseEntity.badRequest().body("쿠폰 생성 문제 발생");
+        return ResponseEntity.ok(new CreateCouponResponse(couponId, "쿠폰 등록 및 재고 초기화 완료"));
     }
 }
