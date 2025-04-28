@@ -64,35 +64,42 @@ public class AdminService {
      * @return 남은 수량 (없으면 null)
      */
     public Integer getCouponStock(Long couponId) {
-        if (couponId == null) {
-            throw new CustomException(ErrorCode.INVALID_REQUEST);
-        }
+        try {
+            if (couponId == null) {
+                log.error("couponId is null");
+                throw new CustomException(ErrorCode.INVALID_REQUEST);
+            }
 
-        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
-        Object stockObj = redisTemplate.opsForValue().get(key);
+            String key = COUPON_STOCK_PREFIX + couponId + ":stock";
+            Object stockObj = redisTemplate.opsForValue().get(key);
 
-        if (stockObj == null) {
-            // Redis에 없으면 DB 조회
-            Coupons coupon = couponsRepository.findById(couponId).orElse(null);
+            if (stockObj == null) {
+                // Redis에 없으면 DB 조회
+                Coupons coupon = couponsRepository.findById(couponId).orElse(null);
 
-            if (coupon == null) { // 존재하지 않는 쿠폰은 NULL 로 저장
-                redisTemplate.opsForValue().set(key, VALUE_NULL, Duration.ofMinutes(1));
+                if (coupon == null) { // 존재하지 않는 쿠폰은 NULL 로 저장
+                    redisTemplate.opsForValue().set(key, VALUE_NULL, Duration.ofMinutes(1));
+                    throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
+                }
+
+                // DB에 있으면 Redis 적재
+                redisTemplate.opsForValue().set(key, coupon.getTotalQuantity(), Duration.ofHours(6));
+                return coupon.getTotalQuantity();
+            }
+
+            if (VALUE_NULL.equals(stockObj)) {
+                log.error("couponId {} is null", couponId);
                 throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
             }
 
-            // DB에 있으면 Redis 적재
-            redisTemplate.opsForValue().set(key, coupon.getTotalQuantity(), Duration.ofHours(6));
-            return coupon.getTotalQuantity();
-        }
-
-        if (VALUE_NULL.equals(stockObj)) {
-            throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
-        }
-
-        try {
-            return (Integer) stockObj;
-        } catch (ClassCastException e) {
-            log.error("couponId: {} ERROR!", couponId, e);
+            try {
+                return (Integer) stockObj;
+            } catch (ClassCastException e) {
+                log.error("couponId: {} ERROR!", couponId, e);
+                throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            log.error("ERROR!", e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
