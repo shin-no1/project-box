@@ -3,7 +3,6 @@ package io.github.haeun.coupon.web.advice;
 import io.github.haeun.coupon.common.exception.CustomException;
 import io.github.haeun.coupon.common.exception.ErrorCode;
 import io.github.haeun.coupon.web.advice.dto.ErrorResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
