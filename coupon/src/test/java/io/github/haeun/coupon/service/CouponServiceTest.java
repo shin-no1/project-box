@@ -1,14 +1,18 @@
 package io.github.haeun.coupon.service;
 
-import io.github.haeun.coupon.web.dto.CouponStockRequest;
+import io.github.haeun.coupon.common.constant.CouponConstants;
+import io.github.haeun.coupon.common.exception.CustomException;
+import io.github.haeun.coupon.common.exception.ErrorCode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @SpringBootTest
 public class CouponServiceTest {
@@ -16,58 +20,57 @@ public class CouponServiceTest {
     private CouponService couponService;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
-    private static final String COUPON_STOCK_PREFIX = "coupon:";
+    private static final Long COUPON_ID = Long.MAX_VALUE;
+    private static final String STOCK_KEY = CouponConstants.getCouponStockKey(COUPON_ID);
 
-    void cleanUp(String key) {
-        redisTemplate.delete(key);
+    @BeforeEach
+    void setUp() {
+        // 매 테스트 전에 쿠폰 재고를 10개로 초기화
+        redisTemplate.opsForValue().set(STOCK_KEY, "10");
     }
 
-    @Test
-    @DisplayName("쿠폰 재고 초기화 - TTL 없이 저장")
-    void initCouponStock_withoutTTL_success() {
-        Long couponId = Long.MAX_VALUE - 1;
-        int quantity = 100;
-        int ttlSeconds = 0;
-        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
+    @Nested
+    @DisplayName("쿠폰 발급(issueCoupon) 통합 테스트")
+    class IssueCouponTest {
 
-        couponService.initCouponStock(new CouponStockRequest(couponId, quantity, ttlSeconds));
+        @Test
+        @DisplayName("정상적으로 쿠폰 발급에 성공한다")
+        void issueCoupon_success() {
+            // when
+            boolean result = couponService.issueCoupon(COUPON_ID);
 
-        Object stock = redisTemplate.opsForValue().get(key);
-        assertThat(stock).isEqualTo(quantity);
+            // then
+            assertThat(result).isTrue();
 
-        cleanUp(key);
+            // 재고가 9로 감소했는지 확인
+            String stock = redisTemplate.opsForValue().get(STOCK_KEY);
+            assertThat(stock).isEqualTo("9");
+        }
+
+        @Test
+        @DisplayName("쿠폰 재고가 0 이하일 경우 발급에 실패한다")
+        void issueCoupon_outOfStock() {
+            // 재고를 0으로 세팅
+            redisTemplate.opsForValue().set(STOCK_KEY, "0");
+
+            // when / then
+            assertThatThrownBy(() -> couponService.issueCoupon(COUPON_ID))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(ErrorCode.COUPON_OUT_OF_STOCK.getMessage());
+
+            // 재고는 다시 0으로 복구돼야 함
+            String stock = redisTemplate.opsForValue().get(STOCK_KEY);
+            assertThat(stock).isEqualTo("0");
+        }
+
+        @Test
+        @DisplayName("couponId가 null일 경우 INVALID_REQUEST 예외 발생")
+        void issueCoupon_invalidRequest() {
+            assertThatThrownBy(() -> couponService.issueCoupon(null))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(ErrorCode.INVALID_REQUEST.getMessage());
+        }
     }
-
-    @Test
-    @DisplayName("쿠폰 재고 초기화 - TTL 설정해서 저장")
-    void initCouponStock_withTTL_success() {
-        Long couponId = 456L;
-        int quantity = 200;
-        int ttlSeconds = 60;
-        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
-
-        couponService.initCouponStock(new CouponStockRequest(couponId, quantity, ttlSeconds));
-
-        Object stock = redisTemplate.opsForValue().get(key);
-        assertThat(stock).isEqualTo(quantity);
-
-        // TTL이 0보다 큰지 확인 (만료 시간이 걸렸는지 체크)
-        Long ttl = redisTemplate.getExpire(key);
-        assertThat(ttl).isGreaterThan(0);
-    }
-
-    @Test
-    @DisplayName("쿠폰 재고 초기화 - 필수 파라미터 누락시 예외 발생")
-    void initCouponStock_missingParameters_fail() {
-        Long couponId = null;
-        int quantity = 0;
-        int ttlSeconds = 0;
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            couponService.initCouponStock(new CouponStockRequest(couponId, quantity, ttlSeconds));
-        });
-    }
-
 }
