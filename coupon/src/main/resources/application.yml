@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: coupon
+  datasource:
+    url: jdbc:mariadb://localhost:3306/coupon
+    username: user
+    password: user
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
