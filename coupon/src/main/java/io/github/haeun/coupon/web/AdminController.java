@@ -23,11 +23,6 @@ public class AdminController {
     @GetMapping("/coupon/{couponId}")
     public ResponseEntity<?> getCoupon(@PathVariable Long couponId) {
         Integer stock = adminService.getCouponStock(couponId);
-
-        if (stock == null) {
-            return ResponseEntity.status(404).body("쿠폰을 찾을 수 없습니다.");
-        }
-
         return ResponseEntity.ok(new CouponStockResponse(couponId, stock));
     }
 }
