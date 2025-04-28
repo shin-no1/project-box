@@ -13,4 +13,9 @@ public class CreateCouponRequest {
         this.totalQuantity = totalQuantity;
         this.ttlSeconds = ttlSeconds;
     }
+
+    @Override
+    public String toString() {
+        return "CreateCouponRequest [name=" + name + ", totalQuantity=" + totalQuantity + ", ttlSeconds=" + ttlSeconds + "]";
+    }
 }

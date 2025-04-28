@@ -17,8 +17,11 @@ public class AdminController {
     private final AdminService adminService;
 
     @PostMapping("/coupons")
-    public ResponseEntity<CreateCouponResponse> createCoupon(@RequestBody CreateCouponRequest request) {
+    public ResponseEntity<?> createCoupon(@RequestBody CreateCouponRequest request) {
         Long couponId = adminService.createCoupon(request);
-        return ResponseEntity.ok(new CreateCouponResponse(couponId, "쿠폰 등록 및 재고 초기화 완료"));
+        if (couponId != null) {
+            return ResponseEntity.ok(new CreateCouponResponse(couponId, "쿠폰 등록 및 재고 초기화 완료"));
+        }
+        return ResponseEntity.badRequest().body("쿠폰 생성 문제 발생");
     }
 }
