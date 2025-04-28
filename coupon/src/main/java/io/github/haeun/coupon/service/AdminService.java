@@ -18,8 +18,10 @@ import java.time.Duration;
 @Service
 public class AdminService {
     private final RedisTemplate<String, Object> redisTemplate;
-    private static final String COUPON_STOCK_PREFIX = "coupon:";
     private final CouponsRepository couponsRepository;
+
+    private static final String COUPON_STOCK_PREFIX = "coupon:";
+    private final String VALUE_NULL = "NULL";
 
     /**
      * 쿠폰을 DB와 Redis에 추가하는 메서드
@@ -70,6 +72,20 @@ public class AdminService {
         Object stockObj = redisTemplate.opsForValue().get(key);
 
         if (stockObj == null) {
+            // Redis에 없으면 DB 조회
+            Coupons coupon = couponsRepository.findById(couponId).orElse(null);
+
+            if (coupon == null) { // 존재하지 않는 쿠폰은 NULL 로 저장
+                redisTemplate.opsForValue().set(key, VALUE_NULL, Duration.ofMinutes(1));
+                throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
+            }
+
+            // DB에 있으면 Redis 적재
+            redisTemplate.opsForValue().set(key, coupon.getTotalQuantity(), Duration.ofHours(6));
+            return coupon.getTotalQuantity();
+        }
+
+        if (VALUE_NULL.equals(stockObj)) {
             throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
         }
 
