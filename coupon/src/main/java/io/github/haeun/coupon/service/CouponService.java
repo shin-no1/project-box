@@ -14,24 +14,41 @@ public class CouponService {
     private static final String COUPON_STOCK_PREFIX = "coupon:";
 
     /**
-     * 쿠폰 재고 수량을 Redis에서 조회하는 메서드
+     * 쿠폰 재고를 Redis에 초기화하는 메서드
      *
-     * @param couponId 쿠폰 ID
-     * @return 남은 수량 (없으면 null)
+     * @param request
+     * - couponId 쿠폰 ID
+     * - quantity 초기 재고 수량
+     * - ttlSeconds TTL (초 단위, 선택값. null이면 무제한 저장)
      */
-    public Integer getCouponStock(Long couponId) {
-        if (couponId == null) {
-            // TODO: 예외처리
-            throw new IllegalArgumentException("couponId는 필수입니다.");
+    public void initCouponStock(CouponStockRequest request) {
+        if (request.getCouponId() == null || request.getQuantity() <= 0) {
+            // TODO: 에러 예외처리
+            throw new IllegalArgumentException("couponId와 quantity는 필수이며, quantity는 1 이상이어야 합니다.");
         }
 
-        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
-        Object stockObj = redisTemplate.opsForValue().get(key);
+        String key = COUPON_STOCK_PREFIX + request.getCouponId() + ":stock";
 
-        if (stockObj == null) {
-            return null; // 존재하지 않음
+        try {
+            if (request.getTtlSeconds() > 0) {
+                redisTemplate.opsForValue().set(key, request.getQuantity(), Duration.ofSeconds(request.getTtlSeconds()));
+            } else {
+                redisTemplate.opsForValue().set(key, request.getQuantity());
+            }
+        } catch (Exception e) {
+            // TODO: 에러 예외처리
+            throw new RuntimeException("쿠폰 초기화 중 Redis 오류 발생", e);
         }
-        return (Integer) stockObj;
     }
 
+
+    public boolean issueCoupon(Long couponId) {
+        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
+        Long stock = redisTemplate.opsForValue().decrement(key);
+        if (stock == null) {
+            // TODO: 에러 예외처리 (쿠폰이 없거나, 시스템 에러)
+            throw new IllegalArgumentException("coupon id " + couponId + " is out of stock");
+        }
+        return stock >= 0;
+    }
 }
