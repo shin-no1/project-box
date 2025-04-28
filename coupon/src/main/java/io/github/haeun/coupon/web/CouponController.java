@@ -22,4 +22,16 @@ public class CouponController {
             return ResponseEntity.badRequest().body("에러 발생");
         }
     }
+
+    @GetMapping("/{couponId}")
+    public ResponseEntity<?> getCouponStock(@PathVariable Long couponId) {
+        Integer stock = couponService.getCouponStock(couponId);
+
+        if (stock == null) {
+            return ResponseEntity.status(404).body("쿠폰을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(new CouponStockResponse(couponId, stock));
+    }
+
 }

@@ -71,4 +71,33 @@ public class CouponServiceTest {
         });
     }
 
+    @Test
+    @DisplayName("쿠폰 재고 조회 성공 - 존재하는 경우")
+    void getCouponStock_success() {
+        Long couponId = 123L;
+        int quantity = 50;
+        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
+
+        // Redis에 쿠폰 재고 세팅
+        redisTemplate.opsForValue().set(key, quantity);
+
+        Integer stock = couponService.getCouponStock(couponId);
+        assertThat(stock).isEqualTo(quantity);
+    }
+
+    @Test
+    @DisplayName("쿠폰 재고 조회 실패 - 존재하지 않는 경우")
+    void getCouponStock_notFound() {
+        Long couponId = Long.MAX_VALUE; // Redis에 없는 쿠폰 ID
+        Integer stock = couponService.getCouponStock(couponId);
+        assertThat(stock).isNull();
+    }
+
+    @Test
+    @DisplayName("쿠폰 재고 조회 실패 - 잘못된 입력")
+    void getCouponStock_invalidInput() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            couponService.getCouponStock(null);
+        });
+    }
 }
