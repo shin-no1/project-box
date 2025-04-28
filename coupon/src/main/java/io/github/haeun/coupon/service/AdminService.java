@@ -21,6 +21,15 @@ public class AdminService {
     private static final String COUPON_STOCK_PREFIX = "coupon:";
     private final CouponsRepository couponsRepository;
 
+    /**
+     * 쿠폰을 DB와 Redis에 추가하는 메서드
+     *
+     * @param request
+     * - name: 쿠폰명
+     * - totalQuantity: 쿠폰 개수
+     * - ttlSeconds: 만료 시간
+     * @return 쿠폰 아이디 (예외 발생 시 null)
+     */
     @Transactional
     public Long createCoupon(CreateCouponRequest request) {
         try {
