@@ -18,10 +18,9 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @Service
 public class AdminService {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final CouponsRepository couponsRepository;
 
-    private static final String COUPON_STOCK_PREFIX = "coupon:";
     private final String VALUE_NULL = "NULL";
 
     /**
@@ -46,9 +45,9 @@ public class AdminService {
             // 2. Redis에 재고 저장
             String key = CouponConstants.getCouponStockKey(savedCoupon.getId());
             if (request.getTtlSeconds() != null && request.getTtlSeconds() > 0) {
-                redisTemplate.opsForValue().set(key, request.getTotalQuantity(), Duration.ofSeconds(request.getTtlSeconds()));
+                redisTemplate.opsForValue().set(key, String.valueOf(request.getTotalQuantity()), Duration.ofSeconds(request.getTtlSeconds()));
             } else {
-                redisTemplate.opsForValue().set(key, request.getTotalQuantity());
+                redisTemplate.opsForValue().set(key, String.valueOf(request.getTotalQuantity()));
             }
             return savedCoupon.getId();
         } catch (Exception e) {
@@ -71,7 +70,7 @@ public class AdminService {
         }
 
         String key = CouponConstants.getCouponStockKey(couponId);
-        Object stockObj = redisTemplate.opsForValue().get(key);
+        String stockObj = redisTemplate.opsForValue().get(key);
 
         if (stockObj == null) {
             // Redis에 없으면 DB 조회
@@ -83,7 +82,7 @@ public class AdminService {
             }
 
             // DB에 있으면 Redis 적재
-            redisTemplate.opsForValue().set(key, coupon.getTotalQuantity(), Duration.ofHours(6));
+            redisTemplate.opsForValue().set(key, String.valueOf(coupon.getTotalQuantity()), Duration.ofHours(6));
             return coupon.getTotalQuantity();
         }
 
@@ -93,7 +92,7 @@ public class AdminService {
         }
 
         try {
-            return (Integer) stockObj;
+            return Integer.parseInt(stockObj);
         } catch (ClassCastException e) {
             log.error("couponId: {} ERROR!", couponId, e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
