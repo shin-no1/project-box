@@ -1,5 +1,6 @@
 package io.github.haeun.coupon.service;
 
+import io.github.haeun.coupon.common.exception.CustomException;
 import io.github.haeun.coupon.domain.coupons.Coupons;
 import io.github.haeun.coupon.domain.coupons.CouponsRepository;
 import io.github.haeun.coupon.web.dto.CreateCouponRequest;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class AdminServiceTest {
@@ -53,5 +55,39 @@ public class AdminServiceTest {
         // TTL 설정되었는지 확인
         Long ttl = redisTemplate.getExpire(key);
         assertThat(ttl).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("쿠폰 재고 조회 성공 - 존재하는 경우")
+    void getCouponStock_success() {
+        if (!testMode) {
+            return;
+        }
+        Long couponId = 123L;
+        int quantity = 50;
+        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
+
+        // Redis에 쿠폰 재고 세팅
+        redisTemplate.opsForValue().set(key, quantity);
+
+        Integer stock = adminService.getCouponStock(couponId);
+        assertThat(stock).isEqualTo(quantity);
+    }
+
+    @Test
+    @DisplayName("쿠폰 재고 조회 실패 - 존재하지 않는 경우")
+    void getCouponStock_notFound() {
+        Long couponId = Long.MAX_VALUE; // Redis에 없는 쿠폰 ID
+        assertThrows(CustomException.class, () -> {
+            adminService.getCouponStock(couponId);
+        });
+    }
+
+    @Test
+    @DisplayName("쿠폰 재고 조회 실패 - 잘못된 입력")
+    void getCouponStock_invalidInput() {
+        assertThrows(CustomException.class, () -> {
+            adminService.getCouponStock(null);
+        });
     }
 }

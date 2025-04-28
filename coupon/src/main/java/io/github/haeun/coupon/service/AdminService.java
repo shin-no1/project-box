@@ -54,4 +54,31 @@ public class AdminService {
         }
     }
 
+
+    /**
+     * 쿠폰 재고 수량을 Redis에서 조회하는 메서드
+     *
+     * @param couponId 쿠폰 ID
+     * @return 남은 수량 (없으면 null)
+     */
+    public Integer getCouponStock(Long couponId) {
+        if (couponId == null) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST);
+        }
+
+        String key = COUPON_STOCK_PREFIX + couponId + ":stock";
+        Object stockObj = redisTemplate.opsForValue().get(key);
+
+        if (stockObj == null) {
+            throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
+        }
+
+        try {
+            return (Integer) stockObj;
+        } catch (ClassCastException e) {
+            log.error("couponId: {} ERROR!", couponId, e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
