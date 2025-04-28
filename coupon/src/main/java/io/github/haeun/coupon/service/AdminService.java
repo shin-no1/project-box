@@ -1,5 +1,6 @@
 package io.github.haeun.coupon.service;
 
+import io.github.haeun.coupon.common.constant.CouponConstants;
 import io.github.haeun.coupon.common.exception.CustomException;
 import io.github.haeun.coupon.common.exception.ErrorCode;
 import io.github.haeun.coupon.domain.coupons.Coupons;
@@ -43,7 +44,7 @@ public class AdminService {
             Coupons savedCoupon = couponsRepository.save(coupon);
 
             // 2. Redis에 재고 저장
-            String key = COUPON_STOCK_PREFIX + savedCoupon.getId() + ":stock";
+            String key = CouponConstants.getCouponStockKey(savedCoupon.getId());
             if (request.getTtlSeconds() != null && request.getTtlSeconds() > 0) {
                 redisTemplate.opsForValue().set(key, request.getTotalQuantity(), Duration.ofSeconds(request.getTtlSeconds()));
             } else {
@@ -70,7 +71,7 @@ public class AdminService {
                 throw new CustomException(ErrorCode.INVALID_REQUEST);
             }
 
-            String key = COUPON_STOCK_PREFIX + couponId + ":stock";
+            String key = CouponConstants.getCouponStockKey(couponId);
             Object stockObj = redisTemplate.opsForValue().get(key);
 
             if (stockObj == null) {
