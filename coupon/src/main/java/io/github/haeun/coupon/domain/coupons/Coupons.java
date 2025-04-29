@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
 @NoArgsConstructor
+
 @Getter
 @Entity
 public class Coupons {
@@ -25,16 +27,20 @@ public class Coupons {
     @Column(nullable = false)
     private int totalQuantity;
 
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private int issuedQuantity;
+
     @CreationTimestamp
-    private Timestamp created_at;
+    private Timestamp createdAt;
 
     @UpdateTimestamp
-    private Timestamp updated_at;
+    private Timestamp updatedAt;
 
     @Builder
-    public Coupons(Long id, String name, Integer totalQuantity) {
+    public Coupons(Long id, String name, int totalQuantity) {
         if (id != null) this.id = id;
-        if (name != null) this.name = name;
-        if (totalQuantity != null) this.totalQuantity = totalQuantity;
+        this.name = name;
+        this.totalQuantity = totalQuantity;
     }
 }
