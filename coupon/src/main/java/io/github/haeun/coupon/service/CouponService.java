@@ -23,7 +23,7 @@ public class CouponService {
     private final RedisTemplate<String, String> redisTemplate;
     private final CouponsRepository couponsRepository;
 
-    public boolean issueCoupon(Long couponId) {
+    public boolean issueCoupon(Long couponId, String userId) {
         if (couponId == null) {
             log.error("couponId is null");
             throw new CustomException(ErrorCode.INVALID_REQUEST);
@@ -55,7 +55,7 @@ public class CouponService {
         // 발급 성공 Redis Stream에 기록
         Map<String, String> message = new HashMap<>();
         message.put("couponId", String.valueOf(couponId));
-        message.put("userId", "testUser");
+        message.put("userId", userId);
         message.put("createdAt", String.valueOf(Timestamp.valueOf(LocalDateTime.now())));
         redisTemplate.opsForStream().add(CouponConstants.STREAM_KEY, message);
         log.info("CouponIssued couponId: {}, userId: {}, createAt: {}", couponId, message.get("userId"), message.get("createdAt"));

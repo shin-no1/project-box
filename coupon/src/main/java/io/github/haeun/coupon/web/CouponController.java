@@ -1,12 +1,10 @@
 package io.github.haeun.coupon.web;
 
 import io.github.haeun.coupon.service.CouponService;
+import io.github.haeun.coupon.web.dto.IssueCouponRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/coupons")
@@ -15,8 +13,8 @@ public class CouponController {
     private final CouponService couponService;
 
     @PostMapping("/{couponId}/issue")
-    public ResponseEntity<String> issueCoupon(@PathVariable Long couponId) {
-        couponService.issueCoupon(couponId);
+    public ResponseEntity<String> issueCoupon(@PathVariable Long couponId, @RequestBody IssueCouponRequest request) {
+        couponService.issueCoupon(couponId, request.getUserId());
         return ResponseEntity.ok("쿠폰 발급 성공");
     }
 }

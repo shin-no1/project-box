@@ -39,7 +39,7 @@ public class CouponServiceTest {
         @DisplayName("정상적으로 쿠폰 발급에 성공한다")
         void issueCoupon_success() {
             // when
-            boolean result = couponService.issueCoupon(COUPON_ID);
+            boolean result = couponService.issueCoupon(COUPON_ID, "TEST_USER");
 
             // then
             assertThat(result).isTrue();
@@ -56,7 +56,7 @@ public class CouponServiceTest {
             redisTemplate.opsForValue().set(STOCK_KEY, "0");
 
             // when / then
-            assertThatThrownBy(() -> couponService.issueCoupon(COUPON_ID))
+            assertThatThrownBy(() -> couponService.issueCoupon(COUPON_ID, "TEST_USER"))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(ErrorCode.COUPON_OUT_OF_STOCK.getMessage());
 
@@ -68,7 +68,7 @@ public class CouponServiceTest {
         @Test
         @DisplayName("couponId가 null일 경우 INVALID_REQUEST 예외 발생")
         void issueCoupon_invalidRequest() {
-            assertThatThrownBy(() -> couponService.issueCoupon(null))
+            assertThatThrownBy(() -> couponService.issueCoupon(null, "TEST_USER"))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(ErrorCode.INVALID_REQUEST.getMessage());
         }
