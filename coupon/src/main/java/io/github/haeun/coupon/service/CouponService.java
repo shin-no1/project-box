@@ -10,7 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +31,7 @@ public class CouponService {
 
         String key = CouponConstants.getCouponStockKey(couponId);
 
-        // 1. Key 존재 여부 확인
+        // Key 존재 여부 확인 후 DB 조회
         boolean exist = redisTemplate.hasKey(key);
         if (!exist) {
             Coupons coupons = couponsRepository.findById(couponId).orElse(null);
@@ -41,13 +45,18 @@ public class CouponService {
         }
 
         Long stock = redisTemplate.opsForValue().decrement(key);
-
         if (stock < 0) {
             // 재고가 0 미만이면 1 증가시켜 원복하기 (0으로)
             redisTemplate.opsForValue().increment(key);
             log.error("Out Of Stock couponId:{} ", couponId);
             throw new CustomException(ErrorCode.COUPON_OUT_OF_STOCK);
         }
+
+        // 발급 성공 Redis Stream에 기록
+        Map<String, String> message = new HashMap<>();
+        message.put("couponId", String.valueOf(couponId));
+        message.put("userId", "testUser");
+        redisTemplate.opsForStream().add(CouponConstants.STREAM_KEY, message);
 
         return true;
     }

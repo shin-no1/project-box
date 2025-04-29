@@ -32,9 +32,9 @@ public class Coupons {
     private Timestamp updated_at;
 
     @Builder
-    public Coupons(String name, int totalQuantity) {
-        this.name = name;
-        this.totalQuantity = totalQuantity;
+    public Coupons(Long id, String name, Integer totalQuantity) {
+        if (id != null) this.id = id;
+        if (name != null) this.name = name;
+        if (totalQuantity != null) this.totalQuantity = totalQuantity;
     }
-
 }

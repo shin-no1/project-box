@@ -2,6 +2,7 @@ package io.github.haeun.coupon.domain.couponIssues;
 
 import io.github.haeun.coupon.domain.coupons.Coupons;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,8 +22,14 @@ public class CouponIssues {
 
     @ManyToOne()
     @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupons Coupons;
+    private Coupons coupons;
 
     @CreationTimestamp
     private Timestamp createdAt;
+
+    @Builder
+    public CouponIssues(String userId, Coupons coupons) {
+        this.userId = userId;
+        this.coupons = coupons;
+    }
 }
