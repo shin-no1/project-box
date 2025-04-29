@@ -21,8 +21,6 @@ public class AdminService {
     private final RedisTemplate<String, String> redisTemplate;
     private final CouponsRepository couponsRepository;
 
-    private final String VALUE_NULL = "NULL";
-
     /**
      * 쿠폰을 DB와 Redis에 추가하는 메서드
      *
@@ -77,7 +75,7 @@ public class AdminService {
             Coupons coupon = couponsRepository.findById(couponId).orElse(null);
 
             if (coupon == null) { // 존재하지 않는 쿠폰은 NULL 로 저장
-                redisTemplate.opsForValue().set(key, VALUE_NULL, Duration.ofMinutes(1));
+                redisTemplate.opsForValue().set(key, CouponConstants.VALUE_NULL, Duration.ofMinutes(1));
                 throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
             }
 
@@ -86,7 +84,7 @@ public class AdminService {
             return coupon.getTotalQuantity();
         }
 
-        if (VALUE_NULL.equals(stockObj)) {
+        if (CouponConstants.VALUE_NULL.equals(stockObj)) {
             log.error("couponId {} is null", couponId);
             throw new CustomException(ErrorCode.COUPON_NOT_FOUND);
         }
