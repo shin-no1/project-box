@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -24,12 +23,12 @@ public class CouponIssues {
     @JoinColumn(name = "coupon_id", nullable = false)
     private Coupons coupons;
 
-    @CreationTimestamp
     private Timestamp createdAt;
 
     @Builder
-    public CouponIssues(String userId, Coupons coupons) {
+    public CouponIssues(String userId, Coupons coupons, Timestamp createdAt) {
         this.userId = userId;
         this.coupons = coupons;
+        if (createdAt != null) this.createdAt = createdAt;
     }
 }

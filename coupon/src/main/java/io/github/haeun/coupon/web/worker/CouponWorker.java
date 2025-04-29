@@ -7,12 +7,12 @@ import io.github.haeun.coupon.domain.coupons.Coupons;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.*;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +43,14 @@ public class CouponWorker {
                     Map<Object, Object> value = message.getValue();
                     String couponIdStr = String.valueOf(value.get("couponId"));
                     String userId = String.valueOf(value.get("userId"));
+                    String createdAt = String.valueOf(value.get("createdAt"));
 
-                    log.info("Processing coupon issue event: couponId={}, userId={}", couponIdStr, userId);
+                    log.info("Processing coupon issue event: couponId={}, userId={}, createdAt={}", couponIdStr, userId, createdAt);
 
                     CouponIssues issued = CouponIssues.builder()
                             .coupons(Coupons.builder().id(Long.parseLong(couponIdStr)).build())
                             .userId(userId)
+                            .createdAt(Timestamp.valueOf(createdAt))
                             .build();
                     couponIssuesRepository.save(issued);
 

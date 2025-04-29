@@ -56,7 +56,9 @@ public class CouponService {
         Map<String, String> message = new HashMap<>();
         message.put("couponId", String.valueOf(couponId));
         message.put("userId", "testUser");
+        message.put("createdAt", String.valueOf(Timestamp.valueOf(LocalDateTime.now())));
         redisTemplate.opsForStream().add(CouponConstants.STREAM_KEY, message);
+        log.info("CouponIssued couponId: {}, userId: {}, createAt: {}", couponId, message.get("userId"), message.get("createdAt"));
 
         return true;
     }
