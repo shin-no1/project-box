@@ -97,4 +97,15 @@ public class AdminService {
         }
     }
 
+    /**
+     * Redis 쿠폰 초기화
+     */
+    public void initializeCouponStocks() {
+        List<Coupons> allCoupons = couponsRepository.findAll();
+        for (Coupons coupon : allCoupons) {
+            String key = CouponConstants.getCouponStockKey(coupon.getId());
+            redisTemplate.opsForValue().set(key, String.valueOf(coupon.getTotalQuantity() - coupon.getIssuedQuantity()));
+        }
+    }
+
 }

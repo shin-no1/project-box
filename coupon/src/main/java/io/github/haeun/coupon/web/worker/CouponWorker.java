@@ -5,6 +5,7 @@ import io.github.haeun.coupon.domain.couponIssues.CouponIssues;
 import io.github.haeun.coupon.domain.couponIssues.CouponIssuesRepository;
 import io.github.haeun.coupon.domain.coupons.Coupons;
 import io.github.haeun.coupon.domain.coupons.CouponsRepository;
+import io.github.haeun.coupon.domain.jdbc.CouponBatchRepository;
 import io.github.haeun.coupon.service.CouponIssueTransactionalService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,13 @@ public class CouponWorker {
     private final StringRedisTemplate redisTemplate;
     private final CouponIssueTransactionalService couponIssueTransactionalService;
 
-    @Scheduled(fixedDelay = 5000) // 5초마다 실행
+    @Scheduled(fixedDelay = 1000) // 1초마다 실행
     public void consumeCouponIssuedStream() {
         try {
             List<MapRecord<String, Object, Object>> messages = redisTemplate.opsForStream()
                     .read(
                             Consumer.from(CouponConstants.GROUP_NAME, CouponConstants.CONSUMER_NAME),
-                            StreamReadOptions.empty().count(1000).block(Duration.ofSeconds(1)),
+                            StreamReadOptions.empty().count(10000).block(Duration.ofSeconds(1)),
                             StreamOffset.create(CouponConstants.STREAM_KEY, ReadOffset.lastConsumed())
                     );
 
