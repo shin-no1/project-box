@@ -90,4 +90,13 @@ public class AdminServiceTest {
             adminService.getCouponStock(null);
         });
     }
+
+    @Test
+    @DisplayName("쿠폰 재고 초기화")
+    void deleteCoupon_success() {
+        if (!testMode) {
+            return;
+        }
+        adminService.initializeCouponStocks();
+    }
 }
