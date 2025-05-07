@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,7 +71,7 @@ public class AdminService {
         String key = CouponConstants.getCouponStockKey(couponId);
         String stockObj = redisTemplate.opsForValue().get(key);
 
-        if (stockObj == null) {
+        if (stockObj == null) { // TODO: 잔여 stock 으로 변경해야할듯
             // Redis에 없으면 DB 조회
             Coupons coupon = couponsRepository.findById(couponId).orElse(null);
 
