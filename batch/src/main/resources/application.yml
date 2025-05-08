@@ -13,6 +13,16 @@ spring:
       hibernate:
         format_sql: true
     show-sql: false
+  batch:
+    job:
+      enabled: false
+#      name: ${job.name:NONE}
+#    jdbc:
+#      initialize-schema: always
+
+logging:
+  level:
+    org.springframework.batch.core: DEBUG
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

@@ -1,8 +1,6 @@
 package io.github.haeun.batch.domain.book;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -12,18 +10,20 @@ import org.hibernate.annotations.Comment;
 @Entity
 public class Book {
     @Comment("The Id of Book")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private String id;
+    private int id;
 
     @Comment("Book Title")
     @Column(length = 1000)
     private String Title;
 
     @Comment("description of book")
-    @Column(length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Comment("Neme of book authors")
+    @Comment("Name of book authors")
+    @Column(length = 2500)
     private String authors;
 
     @Comment("url for book cover")
@@ -31,18 +31,18 @@ public class Book {
     private String image;
 
     @Comment("link to access this book on google Books")
-    @Column(length = 2000)
+    @Column(length = 1000)
     private String previewLink;
 
     @Comment("Name of the publisheer")
     private String publisher;
 
     @Comment("the date of publish")
-    @Column(length = 10)
+    @Column(length = 25)
     private String publishedDate;
 
     @Comment("link to get more information about the book on google books")
-    @Column(length = 2000)
+    @Column(length = 1000)
     private String infoLink;
 
     @Comment("genres of books")
