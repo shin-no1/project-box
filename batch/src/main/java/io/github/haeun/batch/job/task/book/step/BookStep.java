@@ -39,7 +39,6 @@ public class BookStep {
 
     @Bean(name = "stepBook")
     public Step bookStep() {
-
         return new StepBuilder("stepBook", jobRepository)
                 .<Map<String, Object>, BookDto>chunk(1000, transactionManager)
                 .reader(bookReader())

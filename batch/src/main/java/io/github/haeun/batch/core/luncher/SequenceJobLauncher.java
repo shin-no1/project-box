@@ -14,21 +14,16 @@ public class SequenceJobLauncher {
 
     public static void run(ConfigurableApplicationContext ctx, String[] args) {
         try {
-            try {
-                JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
-                JobParameters jobParameters = new JobParametersBuilder()
-                        .addLong("run.id", System.currentTimeMillis())
-                        .toJobParameters();
+            JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("run.id", System.currentTimeMillis())
+                    .toJobParameters();
 
-                String[] jobNames = System.getProperty("spring.batch.job.names").split(",");
+            String[] jobNames = System.getProperty("spring.batch.job.names").split(",");
 
-                for (String jobName : jobNames) {
-                    jobLauncher.run((Job) ctx.getBean(jobName), jobParameters);
-                }
-            } catch (Exception e) {
-                log.error("error", e);
+            for (String jobName : jobNames) {
+                jobLauncher.run((Job) ctx.getBean(jobName), jobParameters);
             }
-
         } catch (Exception e) {
             log.error("error", e);
         }
