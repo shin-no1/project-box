@@ -7,13 +7,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.support.SynchronizedItemStreamReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ObjectUtils;
 
@@ -33,6 +38,7 @@ public class BookRatingStep {
     private final DataSource dataSource;
 
     private final List<String> bookRatingColumns = Arrays.asList("book_id", "title", "price", "user_id", "profile_name", "helpfulness", "score", "time", "summary", "text");
+    private final Integer poolSize = 10;
 
     public BookRatingStep(JobRepository jobRepository,
                           PlatformTransactionManager transactionManager, DataSource dataSource) {
@@ -48,16 +54,21 @@ public class BookRatingStep {
                 .reader(bookRatingReader())
                 .processor(bookRatingProcessor())
                 .writer(bookRatingWriter())
+                .taskExecutor(taskExecutor())
+                .throttleLimit(poolSize)
                 .build();
     }
 
     @Bean
-    public FlatFileItemReader<Map<String, Object>> bookRatingReader() {
-        return CsvReaderFactory.createReader(
+    public SynchronizedItemStreamReader<Map<String, Object>> bookRatingReader() {
+        FlatFileItemReader<Map<String, Object>> delegate = CsvReaderFactory.createReader(
                 new FileSystemResource("C:/Users/Haeun/main/study/coding/project_batch_book/Amazon Books Reviews/Books_rating.csv"),
                 "bookReader",
                 new String[]{"Id", "Title", "Price", "User_id", "profileName", "review/helpfulness", "review/score", "review/time", "review/summary", "review/text"}
         );
+        SynchronizedItemStreamReader<Map<String, Object>> reader = new SynchronizedItemStreamReader<>();
+        reader.setDelegate(delegate);
+        return reader;
     }
 
     @Bean
@@ -66,7 +77,6 @@ public class BookRatingStep {
             if (ObjectUtils.isEmpty(item)) {
                 return null;
             }
-
             try {
                 BookRatingDto bookRatingDto = new BookRatingDto();
                 bookRatingDto.setBookId(item.getOrDefault("Id", "").toString());
@@ -98,12 +108,32 @@ public class BookRatingStep {
     }
 
     @Bean
-    public JdbcBatchItemWriter<BookRatingDto> bookRatingWriter() {
+    public ItemWriter<BookRatingDto> bookRatingWriter() {
         String tableName = "book_rating";
-        return new JdbcBatchItemWriterBuilder<BookRatingDto>()
+        JdbcBatchItemWriter<BookRatingDto> delegate = new JdbcBatchItemWriterBuilder<BookRatingDto>()
                 .dataSource(dataSource)
                 .sql(StepConstant.getSqlQuery(tableName, bookRatingColumns, false))
                 .beanMapped()
                 .build();
+        delegate.afterPropertiesSet();
+        return new ItemWriter<>() {
+            @Override
+            public void write(Chunk<? extends BookRatingDto> chunk) throws Exception {
+                long start = System.currentTimeMillis();
+                delegate.write(chunk);
+                long end = System.currentTimeMillis();
+                log.info("📦 INSERTED {} rows in {} ms", chunk.getItems().size(), end - start);
+            }
+        };
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(poolSize);
+        executor.setMaxPoolSize(poolSize);
+        executor.setThreadNamePrefix("batch-thread-");
+        executor.initialize();
+        return executor;
     }
 }
