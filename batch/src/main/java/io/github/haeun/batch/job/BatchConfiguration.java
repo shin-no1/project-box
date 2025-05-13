@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BatchConfiguration {
     private final Step stepBook;
+    private final Step stepBookRating;
 
     @Bean
     public Job bookJob(JobRepository jobRepository) {
@@ -19,4 +20,12 @@ public class BatchConfiguration {
                 .start(stepBook)
                 .build();
     }
+
+    @Bean
+    public Job bookRatingJob(JobRepository jobRepository) {
+        return new JobBuilder("bookRatingJob", jobRepository)
+                .start(stepBookRating)
+                .build();
+    }
+
 }

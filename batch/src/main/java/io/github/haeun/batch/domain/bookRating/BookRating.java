@@ -1,6 +1,5 @@
 package io.github.haeun.batch.domain.bookRating;
 
-import io.github.haeun.batch.domain.book.Book;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,16 +19,18 @@ public class BookRating {
     private int id;
 
     @Comment("The Id of Book")
-    @JoinColumn(name = "book_id")
-    @ManyToOne
-    private Book book;
+    private String bookId;
+
+    @Comment("Book Title")
+    @Column(length = 1000)
+    private String title;
 
     @Comment("The price of Book")
     @ColumnDefault("0")
     private Double price;
 
     @Comment("Id of the user who rates the book")
-    @Column(length = 20)
+    @Column(length = 30)
     private String userId;
 
     @Comment("Name of the user who rates the book")
@@ -51,7 +52,7 @@ public class BookRating {
     private String summary;
 
     @Comment("the full text of a review")
-    @Column(length = 5000)
+    @Column(columnDefinition = "TEXT")
     private String text;
 
 }
