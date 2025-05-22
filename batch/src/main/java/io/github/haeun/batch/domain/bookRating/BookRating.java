@@ -9,6 +9,9 @@ import org.hibernate.annotations.Comment;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+@Table(name = "book_rating", indexes = {
+        @Index(name = "book_rating_id_index", columnList = "id"),
+})
 @NoArgsConstructor
 @Getter
 @Entity
